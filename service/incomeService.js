@@ -7,7 +7,7 @@ async function createIncome(data) {
     data: {
       title: data.title,
       amount: data.amount,
-      type: data.type || "income", // Default to "income"
+      type: data.type || "income", 
       date: new Date(data.date),
       category: data.category,
       description: data.description

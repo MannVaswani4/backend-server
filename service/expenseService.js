@@ -7,7 +7,7 @@ async function createExpense(data) {
     data: {
       title: data.title,
       amount: data.amount,
-      type: data.type || "expense", // Default to "expense"
+      type: data.type || "expense", 
       date: new Date(data.date),
       category: data.category,
       description: data.description

@@ -1,50 +1,56 @@
-const ExpenseSchema = require("../models/ExpenseModel")
+const expenseService = require('../service/expenseService');
 
-
+// Add a new expense
 exports.addExpense = async (req, res) => {
-    const {title, amount, category, description, date}  = req.body
-
-    const income = ExpenseSchema({
-        title,
-        amount,
-        category,
-        description,
-        date
-    })
+    const { title, amount, category, description, date } = req.body;
 
     try {
-        //validations
-        if(!title || !category || !description || !date){
-            return res.status(400).json({message: 'All fields are required!'})
+        // Validations
+        if (!title || !category || !description || !date) {
+            return res.status(400).json({ message: 'All fields are required!' });
         }
-        if(amount <= 0 || !amount === 'number'){
-            return res.status(400).json({message: 'Amount must be a positive number!'})
+        if (amount <= 0 || typeof amount !== 'number') {
+            return res.status(400).json({ message: 'Amount must be a positive number!' });
         }
-        await income.save()
-        res.status(200).json({message: 'Expense Added'})
+
+        // Use Prisma to create a new expense
+        const newExpense = await expenseService.createExpense({
+            title,
+            amount,
+            category,
+            description,
+            date
+        });
+
+        res.status(200).json({ message: 'Expense Added', expense: newExpense });
     } catch (error) {
-        res.status(500).json({message: 'Server Error'})
+        console.error(error);
+        res.status(500).json({ message: 'Server Error' });
     }
+};
 
-    console.log(income)
-}
-
-exports.getExpense = async (req, res) =>{
+// Get all expenses
+exports.getExpense = async (req, res) => {
     try {
-        const incomes = await ExpenseSchema.find().sort({createdAt: -1})
-        res.status(200).json(incomes)
+        // Use Prisma to fetch all expenses
+        const expenses = await expenseService.getAllExpenses();
+        res.status(200).json(expenses);
     } catch (error) {
-        res.status(500).json({message: 'Server Error'})
+        console.error(error);
+        res.status(500).json({ message: 'Server Error' });
     }
-}
+};
 
-exports.deleteExpense = async (req, res) =>{
-    const {id} = req.params;
-    ExpenseSchema.findByIdAndDelete(id)
-        .then((income) =>{
-            res.status(200).json({message: 'Expense Deleted'})
-        })
-        .catch((err) =>{
-            res.status(500).json({message: 'Server Error'})
-        })
-}
+// Delete an expense by ID
+exports.deleteExpense = async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        // Use Prisma to delete an expense by ID
+        await expenseService.deleteExpense(id);
+        res.status(200).json({ message: 'Expense Deleted' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server Error' });
+    }
+};
