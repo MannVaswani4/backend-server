@@ -1,63 +1,50 @@
-const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
+const ExpenseSchema = require("../models/ExpenseModel")
+
 
 exports.addExpense = async (req, res) => {
-    const { title, amount:a, category, description, date } = req.body;
+    const {title, amount, category, description, date}  = req.body
 
-    // Validations
-    if (!title || !category || !description || !date) {
-        return res.status(400).json({ message: 'All fields are required!' });
-    }
-
-    if (a <= 0) {
-        return res.status(400).json({ message: 'Amount must be a positive number!' });
-    }
-    if(a){
-        var amount = parseInt(a);
-    }
+    const income = ExpenseSchema({
+        title,
+        amount,
+        category,
+        description,
+        date
+    })
 
     try {
-        // Create a new expense using Prisma
-        const newExpense = await prisma.expense.create({
-            data: {
-                title,
-                amount,
-                category,
-                description,
-                date: new Date(date),
-            },
-        });
-        
-        res.status(200).json({ message: 'Expense Added', expense: newExpense });
+        //validations
+        if(!title || !category || !description || !date){
+            return res.status(400).json({message: 'All fields are required!'})
+        }
+        if(amount <= 0 || !amount === 'number'){
+            return res.status(400).json({message: 'Amount must be a positive number!'})
+        }
+        await income.save()
+        res.status(200).json({message: 'Expense Added'})
     } catch (error) {
-        res.status(500).json({ message: 'Server Error', error: error.message });
+        res.status(500).json({message: 'Server Error'})
     }
-};
 
-exports.getExpense = async (req, res) => {
+    console.log(income)
+}
+
+exports.getExpense = async (req, res) =>{
     try {
-        // Fetch all expenses sorted by creation date (newest first)
-        const expenses = await prisma.expense.findMany({
-            orderBy: { createdAt: 'desc' },
-        });
-
-        res.status(200).json(expenses);
+        const incomes = await ExpenseSchema.find().sort({createdAt: -1})
+        res.status(200).json(incomes)
     } catch (error) {
-        res.status(500).json({ message: 'Server Error', error: error.message });
+        res.status(500).json({message: 'Server Error'})
     }
-};
+}
 
-exports.deleteExpense = async (req, res) => {
-    const { id } = req.params;
-
-    try {
-        // Delete the expense by ID using Prisma
-        await prisma.expense.delete({
-            where: { id: parseInt(id) },
-        });
-
-        res.status(200).json({ message: 'Expense Deleted' });
-    } catch (error) {
-        res.status(500).json({ message: 'Server Error', error: error.message });
-    }
-};
+exports.deleteExpense = async (req, res) =>{
+    const {id} = req.params;
+    ExpenseSchema.findByIdAndDelete(id)
+        .then((income) =>{
+            res.status(200).json({message: 'Expense Deleted'})
+        })
+        .catch((err) =>{
+            res.status(500).json({message: 'Server Error'})
+        })
+}
