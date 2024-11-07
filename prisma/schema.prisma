@@ -8,7 +8,6 @@ generator client {
 }
 
 
-// Define the Expense model
 model Expense {
   id          Int      @id @default(autoincrement()) // Primary key, auto-incremented
   title       String   @db.VarChar(50)               // Max length of 50
@@ -32,6 +31,7 @@ model Income {
   createdAt   DateTime @default(now())               // Automatically set creation date
   updatedAt   DateTime @updatedAt                    // Automatically update the last modification date
 }
+
 model User {
   id        Int      @id @default(autoincrement())
   email     String   @unique
