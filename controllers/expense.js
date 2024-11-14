@@ -2,7 +2,7 @@ const expenseService = require('../service/expenseService');
 
 // Add a new expense
 exports.addExpense = async (req, res) => {
-    const { title, amount, category, description, date } = req.body;
+    const { userId, title, amount, category, description, date } = req.body;
 
     try {
         // Validations
@@ -15,6 +15,7 @@ exports.addExpense = async (req, res) => {
 
         // Use Prisma to create a new expense
         const newExpense = await expenseService.createExpense({
+            userId,
             title,
             amount,
             category,

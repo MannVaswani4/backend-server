@@ -3,8 +3,10 @@ const prisma = new PrismaClient();
 
 // Create a new income record
 async function createIncome(data) {
+  console.log(data);
   return await prisma.income.create({
     data: {
+      userId: data.userId,
       title: data.title,
       amount: data.amount,
       type: data.type || "income", 

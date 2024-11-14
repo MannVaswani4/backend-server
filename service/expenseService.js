@@ -5,6 +5,7 @@ const prisma = new PrismaClient();
 async function createExpense(data) {
   return await prisma.expense.create({
     data: {
+      userId: data.userId,
       title: data.title,
       amount: data.amount,
       type: data.type || "expense", 

@@ -1,5 +1,6 @@
 -- CreateTable
 CREATE TABLE `Expense` (
+    `userId` INTEGER NOT NULL,
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `title` VARCHAR(50) NOT NULL,
     `amount` DOUBLE NOT NULL,

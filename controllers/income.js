@@ -2,7 +2,7 @@ const incomeService = require('../service/incomeService');
 
 // Add a new income
 exports.addIncome = async (req, res) => {
-    const { title, amount, category, description, date } = req.body;
+    const { userId, title, amount, category, description, date } = req.body;
 
     try {
         // Validations
@@ -15,6 +15,7 @@ exports.addIncome = async (req, res) => {
 
         // Use Prisma to create a new income
         const newIncome = await incomeService.createIncome({
+            userId,
             title,
             amount,
             category,
