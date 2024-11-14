@@ -76,7 +76,7 @@ exports.login = [
         }
   
         // Generate a JWT token
-        const token = jwt.sign({ id: user.id }, 'mann2607', { expiresIn: '1h' });
+        const token = jwt.sign({ id: user.id }, process.env.JWT, { expiresIn: '1h' });
   
         res.status(200).json({ token });
       } catch (error) {
